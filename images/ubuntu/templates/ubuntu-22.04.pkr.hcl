@@ -22,8 +22,9 @@ variable "dockerhub_login" {
 }
 
 variable "dockerhub_password" {
-  type    = string
-  default = "${env("DOCKERHUB_PASSWORD")}"
+  type      = string
+  sensitive = true
+  default   = "${env("DOCKERHUB_PASSWORD")}"
 }
 
 variable "helper_script_folder" {
@@ -68,16 +69,37 @@ variable "run_validation_diskspace" {
 }
 
 variable "flavor" {
+  description = "This may need to be an ID from `openstack flavor list`"
+  type        = string
+  default     = "v3-starter-8"
+}
+
+variable "source_image" {
   type    = string
-  default = "v3-starter-8"
+  default = "jammy-server-cloudimg-amd64"
+}
+
+variable "use_block_storage" {
+  description = "use blockstorage (for flavors without storage)"
+  type        = bool
+  default     = false
+}
+
+variable "volume_size" {
+  description = "size (GB) of the blockstorage volume"
+  type = number
+  default = 100
 }
 
 source "openstack" "build_image" {
-  flavor            = "${var.flavor}"
-  image_name        = "${local.managed_image_name}"
-  source_image_name = "jammy-server-cloudimg-amd64"
-  ssh_username      = "ubuntu"
-  ssh_ip_version    = "4"
+  flavor                  = "${var.flavor}"
+  image_name              = "${local.managed_image_name}"
+  source_image_name       = "${var.source_image}"
+  ssh_username            = "ubuntu"
+  ssh_ip_version          = "4"
+  image_visibility        = "private"
+  use_blockstorage_volume = "${var.use_block_storage}"
+  volume_size             = "${var.volume_size}"
 }
 
 build {

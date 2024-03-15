@@ -366,6 +366,7 @@ typings/
 # dotenv environment variables file
 .env
 .env.test
+.envrc
 
 # parcel-bundler cache (https://parceljs.org/)
 .cache
@@ -397,3 +398,6 @@ launch.json
 
 # Ignore dynamic template
 images/*/*-temp.json
+
+# Ignore variable files for packer
+variables.*.hcl
